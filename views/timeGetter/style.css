@@ -20,6 +20,17 @@ body {
   place-items: center;
 }
 
-a {
-  color: rgb(221, 221, 221);
+.flex-box {
+  display: flex;
+  align-items: center;
+  height: 5rem;
+  column-gap: 2rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  border-radius: 5rem;
+  background-color: rgb(221, 221, 221);
+  border: none;
+  cursor: pointer;
 }
