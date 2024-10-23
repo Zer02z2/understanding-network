@@ -1,5 +1,6 @@
 const button = document.getElementById("button")
 const input = document.getElementById("input")
+const record = document.getElementById("right-column")
 
 const init = () => {
   if (!(button && input)) {
@@ -22,7 +23,7 @@ const init = () => {
 }
 
 const fetchPin = async (name) => {
-  const url = "/undnet/api/darkRoom/ping"
+  const url = "https:io.zongzechen.com/undnet/api/darkRoom/ping"
   const data = {
     name: name,
   }
@@ -36,10 +37,22 @@ const fetchPin = async (name) => {
   }
   try {
     console.log("Start fetching")
+    const startTime = new Date().getTime()
     const response = await fetch(url, options)
     const parsedResponse = await response.json()
+    const endTime = new Date().getTime()
+    const ping = endTime - startTime
+    addNewRecord(parsedResponse.name, ping)
     console.log(parsedResponse)
   } catch (error) {}
+}
+
+addNewRecord = (name, ping) => {
+  const element = document.createElement("p")
+  const content = `${name}'s ping is ${ping} ms`
+  const textnode = document.createTextNode(content)
+  element.appendChild(textnode)
+  record.appendChild(element)
 }
 
 init()

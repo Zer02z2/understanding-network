@@ -25,6 +25,10 @@ body {
   place-items: center;
 }
 
+#right-column {
+  padding: 2rem;
+}
+
 input {
   background-color: rgb(79, 79, 79);
   border: none;
