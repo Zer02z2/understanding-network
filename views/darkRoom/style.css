@@ -1,0 +1,48 @@
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: Helvetica;
+  background-color: rgb(24, 24, 24);
+  color: rgb(221, 221, 221);
+  display: grid;
+  place-items: center;
+}
+
+.inner-wrap {
+  width: 100%;
+  max-width: 1820px;
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+#left-column {
+  display: grid;
+  place-items: center;
+}
+
+input {
+  background-color: rgb(79, 79, 79);
+  border: none;
+  border-radius: 15px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: white;
+  margin-right: 1rem;
+}
+input:focus {
+  outline: none;
+}
+
+button {
+  background-color: rgb(255, 208, 0);
+  border: none;
+  border-radius: 5px;
+  border-radius: 15px;
+  padding: 0.2rem 1rem;
+  cursor: pointer;
+}

@@ -9,10 +9,10 @@ app.listen(port, () => {
   console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
 })
 
-const darkRoom = require("./routes/darkRoom")
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
 
-app.use(`/${rootPath}/api/darkRoom`, darkRoom)
+const api = require("./routes/api")
+app.use(`/${rootPath}/api`, api)
 
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "views/404", "index.html"))
