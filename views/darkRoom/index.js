@@ -23,7 +23,7 @@ const init = () => {
 }
 
 const fetchPin = async (name) => {
-  const url = "https:io.zongzechen.com/undnet/api/darkRoom/ping"
+  const url = "https://io.zongzechen.com/undnet/api/darkRoom/ping"
   const data = {
     name: name,
   }

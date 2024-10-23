@@ -11,10 +11,8 @@ router.post("/darkRoom/ping", (req, res) => {
   if (!name) {
     res.status(418).send({ message: "Name is missing" })
   }
-  const time = new Date().getTime()
   res.status(200).send({
     name: name,
-    serverTime: time,
   })
 })
 
