@@ -30,6 +30,9 @@ init()
 io.on("connection", (socket) => {
   alertUpdates()
 })
+const alertUpdates = () => {
+  io.emit("onChange", log)
+}
 
 router.post("/ip", (req, res) => {
   const ip = req.ip
@@ -39,25 +42,20 @@ router.post("/ip", (req, res) => {
     return
   }
   const handleResponse = async () => {
-    res.status(200).send({ message: "Info received" })
-    if (log[ip] && name === log[ip].name) {
-      return
+    res.status(200).send({ ip: ip })
+    if (log[ip]) {
+      if (name === log[ip].name) return
+      log[ip].name = name
+    } else if (ip == "::1") {
+      log[ip] = { ...log.serverIp, name: name }
+    } else {
+      const location = await fetchIpLocation(ip)
+      log[ip] = { location: location, ip: ip, name: name }
     }
-    if (ip == "::1") {
-      log[ip] = log.serverIp
-      alertUpdates()
-      return
-    }
-    const location = await fetchIpLocation(ip)
-    log[ip] = { location: location, ip: ip, name: name }
     alertUpdates()
   }
   handleResponse()
 })
-
-const alertUpdates = () => {
-  io.emit("onChange", log)
-}
 
 const fetchIpLocation = async (ip) => {
   const url = `http://ip-api.com/json/${ip}`
