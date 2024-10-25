@@ -1,45 +1,63 @@
 const express = require("express")
 const router = express.Router()
 const { exec } = require("child_process")
+const io = require("socket.io")(3002, {
+  cors: {
+    origin: "*",
+  },
+})
 
 const log = {}
 
-const command = 'curl "https://api.ipify.org?format=json"'
-exec(command, (error, stdout) => {
-  if (error) {
-    console.error(`exec error: ${error}`)
-    return
-  }
-  const serverIp = JSON.parse(stdout).ip
-  initServerInfo(serverIp)
-})
-
-const initServerInfo = async (serverIp) => {
-  const serverLocation = await fetchIpLocation(serverIp)
-  log["serverIp"] = { ...serverLocation, ip: serverIp }
-}
-
-router.get("/ip", (req, res) => {
-  const ip = req.ip
-  const handleResponse = async () => {
-    if (ip == "::1") {
-      res.status(200).send(log.serverIp)
+const init = async () => {
+  const command = 'curl "https://api.ipify.org?format=json"'
+  exec(command, (error, stdout) => {
+    if (error) {
+      console.error(`exec error: ${error}`)
       return
     }
-    if (log[ip]) {
-      res.status(200).send({ ...log[ip].location, ip: ip })
+    const serverIp = JSON.parse(stdout).ip
+    initServerInfo(serverIp)
+  })
+}
+const initServerInfo = async (serverIp) => {
+  const serverLocation = await fetchIpLocation(serverIp)
+  log["serverIp"] = { ...serverLocation, ip: serverIp, name: "server" }
+}
+
+init()
+
+io.on("connection", (socket) => {
+  alertUpdates()
+})
+
+router.post("/ip", (req, res) => {
+  const ip = req.ip
+  const { name } = req.body
+  if (!name) {
+    res.status(418).send({ message: "Name is missing" })
+    return
+  }
+  const handleResponse = async () => {
+    res.status(200).send({ message: "Info received" })
+    if (log[ip] && name === log[ip].name) {
+      return
+    }
+    if (ip == "::1") {
+      log[ip] = log.serverIp
+      alertUpdates()
       return
     }
     const location = await fetchIpLocation(ip)
-    log[ip] = { location: location }
-    res.status(200).send({ ...location, ip: ip })
+    log[ip] = { location: location, ip: ip, name: name }
+    alertUpdates()
   }
   handleResponse()
 })
 
-router.get("/serverIp", (req, res) => {
-  res.status(200).send(log.serverIp)
-})
+const alertUpdates = () => {
+  io.emit("onChange", log)
+}
 
 const fetchIpLocation = async (ip) => {
   const url = `http://ip-api.com/json/${ip}`
