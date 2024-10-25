@@ -38,7 +38,10 @@ const fetchIpLocation = async (ip) => {
     console.log(log)
     return location
   } catch {
-    return { message: "unable to find location" }
+    const location = { city: undefined, country: undefined }
+    log[ip] = { location: location }
+    console.log(log)
+    return location
   }
 }
 
@@ -61,6 +64,7 @@ router.get("/serverTime", (req, res) => {
   const date = new Date()
   const millis = date.getMilliseconds()
   const time = date.toLocaleString()
+  console.log(date.timeZone)
   res.status(200).send({
     serverMillis: millis,
     serverTime: time,
