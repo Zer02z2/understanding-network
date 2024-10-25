@@ -1,28 +1,48 @@
 const express = require("express")
 const router = express.Router()
+const { exec } = require("child_process")
 
 const log = {}
+
+const command = 'curl "https://api.ipify.org?format=json"'
+exec(command, (error, stdout) => {
+  if (error) {
+    console.error(`exec error: ${error}`)
+    return
+  }
+  const serverIp = JSON.parse(stdout).ip
+  initServerInfo(serverIp)
+})
+
+const initServerInfo = async (serverIp) => {
+  const serverLocation = await fetchIpLocation(serverIp)
+  log["serverIp"] = { ...serverLocation, ip: serverIp }
+}
 
 router.get("/ip", (req, res) => {
   const ip = req.ip
   const handleResponse = async () => {
-    // if (ip == "::1") {
-    //     res.status(200).send({ ip: "Localhost" })
-    //     return
-    //   }
-    const location = await getIpLocation(ip)
+    if (ip == "::1") {
+      res.status(200).send(log.serverIp)
+      return
+    }
+    if (log[ip]) {
+      res.status(200).send({ ...log[ip].location, ip: ip })
+      return
+    }
+    const location = await fetchIpLocation(ip)
+    log[ip] = { location: location }
     res.status(200).send({ ...location, ip: ip })
   }
   handleResponse()
 })
 
-const getIpLocation = async (ip) => {
-  if (log[ip]) return log[ip].location
-  else return await fetchIpLocation(ip)
-}
+router.get("/serverIp", (req, res) => {
+  res.status(200).send(log.serverIp)
+})
 
 const fetchIpLocation = async (ip) => {
-  const url = `http://ip-api.com/json/${"24.48.0.1"}`
+  const url = `http://ip-api.com/json/${ip}`
   const options = {
     method: "GET",
     headers: {
@@ -34,26 +54,12 @@ const fetchIpLocation = async (ip) => {
     const response = await fetch(url, options)
     const result = await response.json()
     const location = { city: result.city, country: result.country }
-    log[ip] = { location: location }
-    console.log(log)
     return location
   } catch {
     const location = { city: undefined, country: undefined }
-    log[ip] = { location: location }
-    console.log(log)
     return location
   }
 }
-
-router.post("/ping", (req, res) => {
-  const { name } = req.body
-  if (!name) {
-    res.status(418).send({ message: "Name is missing" })
-  }
-  res.status(200).send({
-    name: name,
-  })
-})
 
 const bootTime = new Date()
 const serverOffset = bootTime.getTimezoneOffset()
