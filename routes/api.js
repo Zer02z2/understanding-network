@@ -15,4 +15,20 @@ router.post("/darkRoom/ping", (req, res) => {
   })
 })
 
+const bootTime = new Date()
+const serverOffset = bootTime.getTimezoneOffset()
+const hourOffset = -serverOffset / 60
+const timeZone = `UTC ${hourOffset}:00`
+
+router.get("/serverTime", (req, res) => {
+  const date = new Date()
+  const millis = date.getMilliseconds()
+  const time = date.toLocaleString()
+  res.status(200).send({
+    serverMillis: millis,
+    serverTime: time,
+    timeZone: timeZone,
+  })
+})
+
 module.exports = router

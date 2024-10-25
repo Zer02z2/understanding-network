@@ -11,7 +11,7 @@ const init = () => {
   const sendRequest = async () => {
     const value = input.value
     if (value.replace(/\s+/g, "").length === 0) return
-    fetchPin(value)
+    fetchPing(value)
     input.value = ""
   }
 
@@ -22,7 +22,7 @@ const init = () => {
   })
 }
 
-const fetchPin = async (name) => {
+const fetchPing = async (name) => {
   const url = "https://io.zongzechen.com/undnet/api/darkRoom/ping"
   const data = {
     name: name,
