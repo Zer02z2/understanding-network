@@ -1,6 +1,7 @@
 const button = document.getElementById("button")
 const input = document.getElementById("input")
 const record = document.getElementById("right-column")
+const dev = true
 
 const init = () => {
   if (!(button && input)) {
@@ -23,7 +24,9 @@ const init = () => {
 }
 
 const fetchPing = async (name) => {
-  const url = "https://io.zongzechen.com/undnet/api/darkRoom/ping"
+  const url = `${
+    dev ? "" : "https://io.zongzechen.com"
+  }/undnet/darkRoom/api/ping`
   const data = {
     name: name,
   }
@@ -44,7 +47,9 @@ const fetchPing = async (name) => {
     const ping = endTime - startTime
     addNewRecord(parsedResponse.name, ping)
     console.log(parsedResponse)
-  } catch (error) {}
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 addNewRecord = (name, ping) => {

@@ -1,11 +1,7 @@
 const express = require("express")
 const router = express.Router()
 
-router.get("/darkRoom/record", (req, res) => {
-  res.status(200).send({})
-})
-
-router.post("/darkRoom/ping", (req, res) => {
+router.post("/ping", (req, res) => {
   const { name } = req.body
   if (!name) {
     res.status(418).send({ message: "Name is missing" })
