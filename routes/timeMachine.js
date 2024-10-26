@@ -88,14 +88,10 @@ const fetchIpLocation = async (ip) => {
 
 router.get("/serverTime", (req, res) => {
   const date = new Date()
-  const millis = date.getMilliseconds()
-  const time = date.toUTCString()
-  const millisTime = date.getTime()
+  const time = date.getTime()
   console.log(date.timeZone)
   res.status(200).send({
-    serverMillis: millis,
-    serverTime: time,
-    millisTime: millisTime,
+    time: time,
   })
 })
 
