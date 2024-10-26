@@ -8,6 +8,10 @@ const io = require("socket.io")(3002, {
 })
 
 const log = {}
+const bootTime = new Date()
+const serverOffset = bootTime.getTimezoneOffset()
+const hourOffset = -serverOffset / 60
+const timeZone = `UTC ${hourOffset}:00`
 
 const init = async () => {
   const command = 'curl "https://api.ipify.org?format=json"'
@@ -22,7 +26,12 @@ const init = async () => {
 }
 const initServerInfo = async (serverIp) => {
   const serverLocation = await fetchIpLocation(serverIp)
-  log["serverIp"] = { ...serverLocation, ip: serverIp, name: "server" }
+  log["serverIp"] = {
+    ...serverLocation,
+    ip: serverIp,
+    name: "server",
+    timeZone: timeZone,
+  }
 }
 
 init()
@@ -36,7 +45,7 @@ const alertUpdates = () => {
 
 router.post("/ip", (req, res) => {
   const ip = req.ip
-  const { name } = req.body
+  const { name, timeZone } = req.body
   if (!name) {
     res.status(418).send({ message: "Name is missing" })
     return
@@ -50,7 +59,7 @@ router.post("/ip", (req, res) => {
       log[ip] = { ...log.serverIp, name: name }
     } else {
       const location = await fetchIpLocation(ip)
-      log[ip] = { location: location, ip: ip, name: name }
+      log[ip] = { location: location, ip: ip, name: name, timeZone: timeZone }
     }
     alertUpdates()
   }
@@ -77,20 +86,16 @@ const fetchIpLocation = async (ip) => {
   }
 }
 
-const bootTime = new Date()
-const serverOffset = bootTime.getTimezoneOffset()
-const hourOffset = -serverOffset / 60
-const timeZone = `UTC ${hourOffset}:00`
-
 router.get("/serverTime", (req, res) => {
   const date = new Date()
   const millis = date.getMilliseconds()
-  const time = date.toLocaleString()
+  const time = date.toUTCString()
+  const millisTime = date.getTime()
   console.log(date.timeZone)
   res.status(200).send({
     serverMillis: millis,
     serverTime: time,
-    timeZone: timeZone,
+    millisTime: millisTime,
   })
 })
 
