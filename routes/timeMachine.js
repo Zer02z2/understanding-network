@@ -89,7 +89,6 @@ const fetchIpLocation = async (ip) => {
 router.get("/serverTime", (req, res) => {
   const date = new Date()
   const time = date.getTime()
-  console.log(date.timeZone)
   res.status(200).send({
     time: time,
   })
