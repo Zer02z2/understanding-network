@@ -24,5 +24,5 @@ app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
 app.use(`/${rootPath}/darkRoom/api`, darkRoomApi)
 // app.use(`/${rootPath}/timeMachine/api`, timeMachineApi)
 app.use((req, res) => {
-  res.status(404).sendFile(path.join(__dirname, "views/404", "index.html"))
+  res.status(404).sendFile(path.join(__dirname, "views", "index.html"))
 })
