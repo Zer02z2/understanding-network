@@ -8,6 +8,7 @@ const io = require("socket.io")(3002, {
 })
 
 const log = {}
+const idLog = {}
 const bootTime = new Date()
 const serverOffset = bootTime.getTimezoneOffset()
 const hourOffset = -serverOffset / 60
@@ -37,7 +38,21 @@ const initServerInfo = async (serverIp) => {
 init()
 
 io.on("connection", (socket) => {
-  alertUpdates()
+  const id = socket.id
+  idLog[id] = { ip: undefined }
+  socket.on("ip", (ip) => {
+    idLog[id].ip = ip
+    log[ip].id = id
+    log[ip].online = true
+    alertUpdates()
+  })
+  socket.on("disconnect", () => {
+    const ip = idLog[id].ip
+    delete idLog[id]
+    if (!ip) return
+    log[ip].online = false
+    alertUpdates()
+  })
 })
 const alertUpdates = () => {
   io.emit("onChange", log)
@@ -59,7 +74,14 @@ router.post("/ip", (req, res) => {
       log[ip] = { ...log.serverIp, name: name }
     } else {
       const location = await fetchIpLocation(ip)
-      log[ip] = { location: location, ip: ip, name: name, timeZone: timeZone }
+      log[ip] = {
+        location: location,
+        ip: ip,
+        name: name,
+        timeZone: timeZone,
+        online: undefined,
+        id: undefined,
+      }
     }
     alertUpdates()
   }
