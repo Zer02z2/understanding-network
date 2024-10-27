@@ -39,18 +39,20 @@ init()
 
 io.on("connection", (socket) => {
   const id = socket.id
-  idLog[id] = { ip: undefined }
-  socket.on("ip", (ip) => {
-    idLog[id].ip = ip
-    log[ip].id = id
-    log[ip].online = true
+  idLog[id] = { identifier: undefined }
+  alertUpdates()
+  socket.on("identifier", (identifier) => {
+    if (!identifier) return
+    idLog[id].identifier = identifier
+    log[identifier].identifier = identifier
+    log[identifier].online = true
     alertUpdates()
   })
   socket.on("disconnect", () => {
-    const ip = idLog[id].ip
+    const identifier = idLog[id].identifier
     delete idLog[id]
-    if (!ip) return
-    log[ip].online = false
+    if (!identifier) return
+    log[identifier].online = false
     alertUpdates()
   })
 })
