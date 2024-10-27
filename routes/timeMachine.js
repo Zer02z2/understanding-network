@@ -7,8 +7,8 @@ const io = require("socket.io")(3002, {
   },
 })
 
-const log = {}
-const idLog = {}
+const userLog = {}
+const ipLog = {}
 const bootTime = new Date()
 const serverOffset = bootTime.getTimezoneOffset()
 const hourOffset = -serverOffset / 60
@@ -27,68 +27,58 @@ const init = async () => {
 }
 const initServerInfo = async (serverIp) => {
   const serverLocation = await fetchIpLocation(serverIp)
-  log["serverIp"] = {
-    ...serverLocation,
-    ip: serverIp,
+  ipLog["serverIp"] = {
+    location: serverLocation,
+    publicIp: serverIp,
     name: "server",
     timeZone: timeZone,
+    timeDifference: undefined,
   }
+  userLog["server"] = ipLog["serverIp"]
 }
 
 init()
 
 io.on("connection", (socket) => {
   const id = socket.id
-  idLog[id] = { identifier: undefined }
-  alertUpdates()
-  socket.on("identifier", (identifier) => {
-    if (!identifier) return
-    idLog[id].identifier = identifier
-    log[identifier].identifier = identifier
-    log[identifier].online = true
+  const ip = socket.handshake.address
+
+  socket.on("init", (userData) => {
+    initUser(id, ip, userData)
+  })
+
+  socket.on("userData", (userData) => {
+    if (!userData) return
+    Object.keys(userData).forEach((key) => {
+      if (userData[key]) userLog[id][key] = userData[key]
+    })
     alertUpdates()
   })
   socket.on("disconnect", () => {
-    const identifier = idLog[id].identifier
-    delete idLog[id]
-    if (!identifier) return
-    log[identifier].online = false
+    delete userLog[id]
     alertUpdates()
   })
 })
-const alertUpdates = () => {
-  io.emit("onChange", log)
-}
 
-router.post("/ip", (req, res) => {
-  const ip = req.ip
-  const { name, timeZone } = req.body
-  if (!name) {
-    res.status(418).send({ message: "Name is missing" })
-    return
-  }
-  const handleResponse = async () => {
-    res.status(200).send({ ip: ip })
-    if (log[ip]) {
-      if (name === log[ip].name) return
-      log[ip].name = name
-    } else if (ip == "::1") {
-      log[ip] = { ...log.serverIp, name: name }
-    } else {
-      const location = await fetchIpLocation(ip)
-      log[ip] = {
-        location: location,
-        ip: ip,
-        name: name,
-        timeZone: timeZone,
-        online: undefined,
-        id: undefined,
-      }
+const alertUpdates = () => {
+  io.emit("onChange", userLog)
+}
+const initUser = async (id, ip, userData) => {
+  userLog[id] = userData
+  if (ip === "::1") {
+    userLog[id] = { ...userLog[id], ...ipLog.serverIp }
+  } else if (ipLog[ip]) {
+    userLog[id] = { ...userLog[id], ...ipLog[ip] }
+  } else {
+    const location = await fetchIpLocation(ip)
+    ipLog[ip] = {
+      location: location,
+      publicIp: ip,
     }
-    alertUpdates()
+    userLog[id] = { ...userLog[id], ...ipLog[ip] }
   }
-  handleResponse()
-})
+  alertUpdates()
+}
 
 const fetchIpLocation = async (ip) => {
   const url = `http://ip-api.com/json/${ip}`
