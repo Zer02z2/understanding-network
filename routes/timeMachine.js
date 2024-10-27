@@ -35,8 +35,6 @@ module.exports = (io) => {
 
   init()
 
-  console.log(io)
-
   io.on("connection", (socket) => {
     const id = socket.id
     const ip = socket.handshake.address
