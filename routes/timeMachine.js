@@ -52,6 +52,7 @@ io.on("connection", (socket) => {
     Object.keys(userData).forEach((key) => {
       if (userData[key]) userLog[id][key] = userData[key]
     })
+    console.log(userLog)
     alertUpdates()
   })
   socket.on("disconnect", () => {
@@ -77,6 +78,7 @@ const initUser = async (id, ip, userData) => {
     }
     userLog[id] = { ...userLog[id], ...ipLog[ip] }
   }
+  console.log(userLog)
   alertUpdates()
 }
 
