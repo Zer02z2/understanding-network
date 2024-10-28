@@ -37,7 +37,8 @@ module.exports = (io) => {
 
   io.on("connection", (socket) => {
     const id = socket.id
-    const ip = socket.handshake.address
+    const ip =
+      socket.handshake.headers["x-forwarded-for"] || socket.handshake.address
 
     socket.on("init", (userData) => {
       initUser(id, ip, userData)
