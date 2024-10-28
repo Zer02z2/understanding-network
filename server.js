@@ -6,7 +6,7 @@ const app = express()
 //const cors = require("cors")
 
 app.use(express.json())
-const server = app.listen(port, () => {
+app.listen(port, () => {
   console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
 })
 
