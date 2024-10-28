@@ -3,7 +3,8 @@ const path = require("path")
 const port = 3001
 const rootPath = "undnet"
 const app = express()
-//const cors = require("cors")
+const dev = false
+const cors = require("cors")
 
 app.use(express.json())
 app.set("trust proxy", true)
@@ -11,12 +12,16 @@ app.set("trust proxy", true)
 const server = app.listen(port, () => {
   console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
 })
-const io = require("socket.io")(server)
+const io = require("socket.io")(server, {
+  cors: {
+    origin: dev ? "*" : "",
+  },
+})
 
 const darkRoomApi = require("./routes/darkRoom")
 const timeMachineApi = require("./routes/timeMachine")(io)
 
-//app.use(cors({ origin: "*" }))
+app.use(cors({ origin: dev ? "*" : "" }))
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
 app.use(`/${rootPath}/darkRoom/api`, darkRoomApi)
 app.use(`/${rootPath}/timeMachine/api`, timeMachineApi)
