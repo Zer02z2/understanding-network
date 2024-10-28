@@ -16,11 +16,13 @@ app.listen(port, () => {
 //   },
 // })
 
-const darkRoomApi = require("./routes/darkRoom")
 //const timeMachineApi = require("./routes/timeMachine")(io)
 
 //app.use(cors({ origin: "*" }))
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
+
+const darkRoomApi = require("./routes/darkRoom")
+
 app.use(`/${rootPath}/darkRoom/api`, darkRoomApi)
 //app.use(`/${rootPath}/timeMachine/api`, timeMachineApi)
 app.use((req, res) => {
