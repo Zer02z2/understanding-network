@@ -1,6 +1,7 @@
 {
   "name": "understanding-network",
   "version": "1.0.0",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,8 +15,10 @@
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.0",
+    "seedrandom": "^3.0.5",
     "socket.io": "^4.8.1",
-    "soket.io": "^0.0.1-security"
+    "soket.io": "^0.0.1-security",
+    "umap-js": "^1.4.0"
   },
   "devDependencies": {
     "nodemon": "^3.1.7"

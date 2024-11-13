@@ -1,10 +1,18 @@
-const express = require("express")
-const path = require("path")
+import express from "express"
+import path from "path"
+import { fileURLToPath } from "url"
+import cors from "cors"
+import { Server } from "socket.io"
+import darkRoomApi from "./routes/darkRoom.js"
+import timeMachineApi from "./routes/timeMachine.js"
+import textUmapApi from "./routes/textUmap.js"
+
 const port = 3001
 const rootPath = "undnet"
 const app = express()
 const dev = false
-const cors = require("cors")
+const __filename = fileURLToPath(import.meta.url)
+const __dirname = path.dirname(__filename)
 
 app.use(express.json())
 app.set("trust proxy", true)
@@ -12,19 +20,17 @@ app.set("trust proxy", true)
 const server = app.listen(port, () => {
   console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
 })
-const io = require("socket.io")(server, {
+const io = new Server(server, {
   cors: {
     origin: dev ? "*" : "",
   },
 })
 
-const darkRoomApi = require("./routes/darkRoom")
-const timeMachineApi = require("./routes/timeMachine")(io)
-
 app.use(cors({ origin: dev ? "*" : "" }))
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
-app.use(`/${rootPath}/darkRoom/api`, darkRoomApi)
-app.use(`/${rootPath}/timeMachine/api`, timeMachineApi)
+app.use(`/${rootPath}/darkRoom/api`, darkRoomApi())
+app.use(`/${rootPath}/timeMachine/api`, timeMachineApi(io))
+app.use(`/${rootPath}/textUmap`, cors(), textUmapApi())
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "views/404", "index.html"))
 })

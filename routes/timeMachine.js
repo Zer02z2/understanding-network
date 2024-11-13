@@ -1,7 +1,7 @@
-const express = require("express")
-const { exec } = require("child_process")
+import express from "express"
+import { exec } from "child_process"
 
-module.exports = (io) => {
+export default (io) => {
   const router = express.Router()
   const userLog = {}
   const ipLog = {}
