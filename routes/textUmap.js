@@ -16,7 +16,6 @@ export default () => {
     try {
       const result = await fetchEmbedding(text_batch)
       const output = result.output
-      console.log(result)
       const embeddings = output.map((point) => point.embedding)
       const myrng = seedrandom("hello.")
       const umap = new UMAP({
@@ -31,7 +30,7 @@ export default () => {
       res.status(200).send(normalizedFittings)
     } catch (error) {
       console.log(error)
-      res.status(200).send(error)
+      res.status(418).send({ message: "Unable to process request" })
     }
   })
 
