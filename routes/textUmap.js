@@ -5,6 +5,10 @@ import express from "express"
 export default () => {
   const router = express.Router()
 
+  router.get("/status", (req, res) => {
+    res.status(200).send({ message: "I am alive." })
+  })
+
   router.post("/", async (req, res) => {
     const { text_batch, length } = req.body
     if (!text_batch) {
