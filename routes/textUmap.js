@@ -9,7 +9,7 @@ export default () => {
     res.status(200).send({ message: "I am alive." })
   })
 
-  router.post("/", async (req, res) => {
+  router.post("/generate", async (req, res) => {
     const { text_batch, length } = req.body
     if (!text_batch) {
       return res.status(418).send({ message: "textBetch is missing" })
