@@ -5,11 +5,7 @@ import express from "express"
 export default () => {
   const router = express.Router()
 
-  router.get("/status", (req, res) => {
-    res.status(200).send({ message: "I am alive." })
-  })
-
-  router.post("/generate", async (req, res) => {
+  router.post("/", async (req, res) => {
     const { text_batch, length } = req.body
     if (!text_batch) {
       return res.status(418).send({ message: "textBetch is missing" })
