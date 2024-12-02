@@ -28,6 +28,11 @@ const io = new Server(server, {
 
 app.use(cors({ origin: dev ? "*" : "" }))
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
+app.use(
+  `/${rootPath}/image/`,
+  cors(),
+  express.static(path.join(__dirname, "public"))
+)
 app.use(`/${rootPath}/darkRoom/api`, darkRoomApi())
 app.use(`/${rootPath}/timeMachine/api`, timeMachineApi(io))
 app.use(`/${rootPath}/textUmap`, cors(), textUmapApi())
