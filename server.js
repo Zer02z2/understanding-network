@@ -6,6 +6,7 @@ import { Server } from "socket.io"
 import darkRoomApi from "./routes/darkRoom.js"
 import timeMachineApi from "./routes/timeMachine.js"
 import textUmapApi from "./routes/textUmap.js"
+import screenShare from "./routes/screenShare.js"
 
 const port = 3001
 const rootPath = "undnet"
@@ -22,7 +23,7 @@ const server = app.listen(port, () => {
 })
 const io = new Server(server, {
   cors: {
-    origin: dev ? "*" : "",
+    origin: "*",
   },
 })
 
@@ -34,8 +35,9 @@ app.use(
   express.static(path.join(__dirname, "public"))
 )
 app.use(`/${rootPath}/darkRoom/api`, darkRoomApi())
-app.use(`/${rootPath}/timeMachine/api`, timeMachineApi(io))
+app.use(`/${rootPath}/timeMachine/api`, timeMachineApi(io, dev))
 app.use(`/${rootPath}/textUmap`, cors(), textUmapApi())
+app.use(`/${rootPath}/screenShare`, cors(), screenShare(io))
 app.use((req, res) => {
   res.status(404).sendFile(path.join(__dirname, "views/404", "index.html"))
 })

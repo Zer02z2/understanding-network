@@ -1,7 +1,7 @@
 import express from "express"
 import { exec } from "child_process"
 
-export default (io) => {
+export default (io, dev) => {
   const router = express.Router()
   const userLog = {}
   const ipLog = {}
@@ -34,6 +34,14 @@ export default (io) => {
   }
 
   init()
+
+  io.of("/timeMachine").use((socket, next) => {
+    const origin = socket.handshake.headers.origin
+    if (dev || origin === "https://io.zongzechen.com") {
+      return next()
+    }
+    return next(new Error("Namespace CORS Error: Origin not"))
+  })
 
   io.of("/timeMachine").on("connection", (socket) => {
     const id = socket.id
