@@ -35,7 +35,7 @@ export default (io) => {
 
   init()
 
-  io.on("connection", (socket) => {
+  io.of("/timeMachine").on("connection", (socket) => {
     const id = socket.id
     const ip =
       socket.handshake.headers["x-forwarded-for"] || socket.handshake.address
@@ -58,7 +58,7 @@ export default (io) => {
   })
 
   const alertUpdates = () => {
-    io.emit("onChange", userLog)
+    io.of("/timeMachine").emit("onChange", userLog)
   }
   const initUser = async (id, ip, userData) => {
     userLog[id] = userData

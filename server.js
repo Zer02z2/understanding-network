@@ -29,7 +29,7 @@ const io = new Server(server, {
 app.use(cors({ origin: dev ? "*" : "" }))
 app.use(`/${rootPath}`, express.static(path.join(__dirname, "views")))
 app.use(
-  `/${rootPath}/image/`,
+  `/${rootPath}/files/`,
   cors(),
   express.static(path.join(__dirname, "public"))
 )
