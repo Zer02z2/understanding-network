@@ -37,7 +37,7 @@ export default (io, dev) => {
 
   io.of("/timeMachine").use((socket, next) => {
     const origin = socket.handshake.headers.origin
-    if (dev || origin === "https://io.zongzechen.com") {
+    if (dev || origin === "io.zongzechen.com") {
       return next()
     }
     return next(new Error("Namespace CORS Error: Origin not"))
