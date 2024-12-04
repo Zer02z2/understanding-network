@@ -11,7 +11,7 @@ import screenShare from "./routes/screenShare.js"
 const port = 3001
 const rootPath = "undnet"
 const app = express()
-const dev = false
+const dev = true
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 
