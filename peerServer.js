@@ -9,6 +9,7 @@ const server = app.listen(port, () => {
   console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
 })
 const peerServer = ExpressPeerServer(server, {
+  proxied: true,
   debug: true,
 })
 app.use(`/${rootPath}`, peerServer)
