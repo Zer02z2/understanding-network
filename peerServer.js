@@ -1,9 +1,14 @@
 import express from "express"
 import { ExpressPeerServer } from "peer"
 
+const port = 9000
+const rootPath = "peerjs"
+
 const app = express()
-const server = app.listen(9000)
+const server = app.listen(port)
 const peerServer = ExpressPeerServer(server, {
   debug: true,
 })
-app.use("/peerjs", peerServer)
+app.use(`/${rootPath}`, peerServer, () => {
+  console.log(`Server is now alive on http://localhost:${port}/${rootPath}/`)
+})
