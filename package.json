@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "nodemon server.js",
-    "tcp": "nodemon tcp.js"
+    "tcp": "nodemon tcp.js",
+    "peer": "nodemon peerServer.js"
   },
   "keywords": [],
   "author": "",
